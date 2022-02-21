@@ -172,7 +172,7 @@
 
 % *** MATH PACKAGES ***
 %
-%\usepackage{amsmath}
+\usepackage{amsmath}
 % A popular package from the American Mathematical Society that provides
 % many useful and powerful commands for dealing with mathematics.
 %
@@ -409,25 +409,41 @@ The abstract goes here.
 
 
 
+
 \section{Introduction}
-% no \IEEEPARstart
-This demo file is intended to serve as a ``starter file''
-for IEEE Computer Society conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.8b and later.
-% You must have at least 2 lines in the paragraph with the drop letter
-% (should never be an issue)
-I wish you the best of success.
+The goal of this assignment is to learn the optimal policy a player is playing chess in a $4\times4$ chessboard with one queen and one king against the naive opponent with one king. We aim to learn this policy through reinforcement learning. This problem can be formulated as a Markov Process where the  position of the chess pieces correspond to the state and the possible moves for the queen and king of the player correspond to actions. The reward is defined as follows:
+\[   
+r_{t}(s_t, s_{t+1}, a_t) = 
+     \begin{cases}
+        1 \quad \text{opponent's king is in checkmate in $s_{t+1}$}\\
+        0 \quad \text{otherwise}
+     \end{cases}
+\]
 
-\hfill mds
- 
-\hfill August 26, 2015
+To put more formally, the goal of this exercise is to learn the optimal $Q(s,a)$ where
+\[
+Q(s,a) = \mathbf{E_{\pi}}[G_t|s_t = s, a_t = a]
+\]
+and
+\[
+G_t = \sum_{t = 0}^{\infty} \gamma^t r_t.
+\]
+We will use feedforward neural networks to approximate the Q-function.
+\section{Methods}
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+\textbf{SARSA} is an online policy learning method used to learn the Q-function. The update rule is as follows:
 
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+
+
+
+\textbf{Q-Learning}
+
+\section{Results}
+
+
+\section{Conclusion}
+
 
 
 % An example of a floating figure using the graphicx package.
@@ -527,8 +543,7 @@ Subsubsection text here.
 
 
 
-\section{Conclusion}
-The conclusion goes here.
+
 
 
 
@@ -537,17 +552,8 @@ The conclusion goes here.
 
 
 
-% use section* for acknowledgment
-\ifCLASSOPTIONcompsoc
-  % The Computer Society usually uses the plural form
-  \section*{Acknowledgments}
-\else
-  % regular IEEE prefers the singular form
-  \section*{Acknowledgment}
-\fi
 
-
-The authors would like to thank...
+.
 
 
 
