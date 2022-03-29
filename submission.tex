@@ -173,6 +173,9 @@
 % *** MATH PACKAGES ***
 %
 \usepackage{amsmath}
+\usepackage{graphics}
+\usepackage{graphicx}
+
 % A popular package from the American Mathematical Society that provides
 % many useful and powerful commands for dealing with mathematics.
 %
@@ -411,7 +414,7 @@ The abstract goes here.
 
 
 \section{Introduction}
-The goal of this assignment is to learn the optimal policy a player is playing chess in a $4\times4$ chessboard with one queen and one king against the naive opponent with one king. We aim to learn this policy through reinforcement learning. This problem can be formulated as a Markov Process where the  position of the chess pieces correspond to the state and the possible moves for the queen and king of the player correspond to actions. The reward is defined as follows:
+The goal of this project is to learn the optimal policy when a player is playing chess in a $4\times4$ chessboard with one queen and one king against the naive opponent with one king. We aim to learn this policy through reinforcement learning. This problem can be formulated as a Markov Process where the  position of the chess pieces on the board and the number of moves available to the opponent king correspond to the state and the possible moves for the queen and king of the player correspond to actions. The reward is defined as follows:
 \[   
 r_{t}(s_t, s_{t+1}, a_t) = 
      \begin{cases}
@@ -430,14 +433,68 @@ G_t = \sum_{t = 0}^{\infty} \gamma^t r_t.
 \]
 We will use feedforward neural networks to approximate the Q-function.
 \section{Methods}
+There are various methods to obtain the optimal Q-function when using the function approximation. We will discuss about SARSA, Q-learning, and double Q-learning in this project.
 
-\textbf{SARSA} is an online policy learning method used to learn the Q-function. The update rule is as follows:
+\textbf{SARSA}(State–action–reward–state–action) is an  on-policy learning method used to learn the Q-function. The update rule for SARSA is outlined in equation~\ref{eq_update_sarsa} and one can see that the update rule fully depends on the action $A$ taken by the player. Because of this, SARSA is called an on-poloicy learning method.
+\begin{equation}\label{eq_update_sarsa}
+    Q(S,A) \xleftarrow{} Q(S,A) + \alpha [r + \gamma Q(S', A') - Q(S,A)]
+\end{equation}
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[width = 8cm]{SARSA.png} 
+%     \caption{SARSA algorithm from \cite{sutton2018reinforcement}}
+%     \label{fig_SARSA}
+% \end{figure}
+As for Q-learning, the update rule is shown in equation~\ref{eq_update_ql}. One can see that the update rule for the Q-function does not only depend depends on the action $A$ taken by the player  but also is a function of $\max_a Q(S', a)$ which is independent of action $A$. Because of this, SARSA is called an off-poloicy learning method. 
+\begin{equation}\label{eq_update_ql}
+   Q(S,A) \xleftarrow{} Q(S,A) + \alpha [r + \gamma \max_a Q(S', a) - Q(S,A)]
+\end{equation}
+
+Theoretically speaking, using SARSA will learn the $\epsilon-greedy$ policy. However, Q-learning will learn the optimal policy. Both of these statements require that the state-action pairs are visited infinitely many times.
+
+We have also observed in class that SARSA is more conservative than Q-learning. Therefore, if the exploratory moves are very costly in practice, then it would be better to use SARSA.
+
+\textbf{Experience Replay}
+
+Experience replay, introduced in \cite{lin1992self}, is a technique to improve the performance of deep Q-learning and to accelerate the convergence. In particular, in a classical Q-learning approach at each step $t$ of the algorithm one observes $o_t = (s_t, a_t, r_t, s_{t+1})$ and trains the Neural Network, using this observation and then discards this data. In Experience replay, a buffer $B_t \subset \{o_i\}_{i=0}^{t}$ of the observed $o_t$ is built and updated at each time-step $t$. In \cite{mnih2015human}, the authors shuffle this buffer to remove the correlation in the sequence of observation and then sample from $B_t$ in mini-batches uniformly at random, and do Q-updates using the sampled mini-batch. This approach will partially make the Q-learning problem a supervised learning problem since it allows for use of the observations $\{o_t\}$ in multiple weight updates an uses the data more efficiently.
+
+\textbf{Q3}
+
+We have implemented a general class of neural networks with He and Xavier initialization, relu activation function equipped with vanilla gradient descent, RMSProp, and ADAM optimization algorithms. We would like to mention that we have used the labs provided to us and have built on those. For this specific question, we have used the suggested parameters in the assignment along with '?' optimization algorithm. 
+
+
+\textbf{Q4}
+
+
+
+\textbf{Q5}
+As the second deep Q-learning algorithm, we have chosen to implement the double Q-learning proposed in \cite{hasselt2010double}. The algorithm is shown in Figure~\ref{fig_dql}. The main difference between Q-learning and double Q-learning is that we use two networks,$Q^{A}$ and $Q^{B}$ , to estimate the Q-function. At each update step, one network is selected at random to derive the action selection and the other network to estimate the next-step reward. Double Q-learning was suggested to mitigate the effect of the positive bias introduced in the original Q-learning framework. Positive bias is referred to when the values of the state-action pairs already visited in the Q-function are higher than their actually values and hence are selected more often than they should be. 
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width =8.7cm]{DQ.png}
+    \caption{Double Q-learning algorithm of \cite{hasselt2010double}}
+    \label{fig_dql}
+\end{figure}
+
+\textbf{Q6}
+
+\textbf{Q7}
+
+
+% In particular, in Q-Learning, the action $A'$ which corresponds to the action in the next step is chosen after the Q function update where as in SARSA, this happens before the Q update. 
 
 
 
 
 
-\textbf{Q-Learning}
+
+
+
+
 
 \section{Results}
 
@@ -574,20 +631,20 @@ We will use feedforward neural networks to approximate the Q-function.
 % http://mirror.ctan.org/biblio/bibtex/contrib/doc/
 % The IEEEtran BibTeX style support page is at:
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
+\bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
+\bibliography{submission}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
+% \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+% \bibitem{IEEEhowto:kopka}
+% H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 
-\end{thebibliography}
+% \end{thebibliography}
 
 
 
